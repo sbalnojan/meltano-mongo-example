@@ -1,0 +1,47 @@
+version: 1
+default_environment: dev
+environments:
+- name: dev
+- name: staging
+- name: prod
+plugins:
+  extractors:
+  - name: tap-s3-csv
+    variant: transferwise
+    pip_url: pipelinewise-tap-s3-csv
+    config:
+      bucket: test
+      tables:    
+      - search_prefix: ''
+        search_pattern: raw_customers.csv               # use raw_customers.csv|raw_things.csv to have all documents in one stream.
+        table_name: raw_customers       
+        key_properties: [id]
+        delimiter: ','
+      - search_prefix: ''
+        search_pattern: raw_things.csv
+        table_name: raw_things                          # this goes into a second collection called "raw_things"
+        key_properties: [id]
+        delimiter: ','
+      start_date: 2000-01-01T00:00:00Z
+      aws_endpoint_url: http://host.docker.internal:5005 # running a local AWS mock
+      aws_access_key_id: s                               # dummy key id
+      aws_secret_access_key: s                           # dummy access
+      aws_default_region: us-east-1                      # 
+
+  loaders:
+  - name: target-mongodb
+    namespace: target_mongodb
+    pip_url: git+https://gitlab.com/hotglue/target-mongodb.git
+    executable: target-mongodb
+    config:
+      connection_string: mongodb://host.docker.internal:27017
+      db_name: db
+
+  - name: target-blub
+    namespace: target_mongodb
+    pip_url: git+https://gitlab.com/hotglue/target-mongodb.git
+    executable: target-mongodb
+jobs:
+- name: csv-mongo
+  tasks:
+  - tap-s3-csv target-mongodb

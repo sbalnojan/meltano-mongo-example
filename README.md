@@ -1,0 +1,1 @@
+# Meltano MongoDB Sandbox
