@@ -11,10 +11,10 @@ plugins:
     pip_url: pipelinewise-tap-s3-csv
     config:
       bucket: test
-      tables:    
+      tables:
       - search_prefix: ''
         search_pattern: raw_customers.csv               # use raw_customers.csv|raw_things.csv to have all documents in one stream.
-        table_name: raw_customers       
+        table_name: raw_customers
         key_properties: [id]
         delimiter: ','
       - search_prefix: ''
@@ -24,10 +24,13 @@ plugins:
         delimiter: ','
       start_date: 2000-01-01T00:00:00Z
       aws_endpoint_url: http://host.docker.internal:5005 # running a local AWS mock
-      aws_access_key_id: s                               # dummy key id
-      aws_secret_access_key: s                           # dummy access
+      aws_access_key_id: ${AWS_ACCESS_KEY_ID}            # load value from environment or .env file
+      aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}    # load value from environment or .env file
       aws_default_region: us-east-1                      # 
 
+  - name: tap-github
+    variant: singer-io
+    pip_url: tap-github
   loaders:
   - name: target-mongodb
     namespace: target_mongodb
@@ -45,3 +48,4 @@ jobs:
 - name: csv-mongo
   tasks:
   - tap-s3-csv target-mongodb
+project_id: 37d81821-1385-4d4e-afae-1ea5cbd06ab5
