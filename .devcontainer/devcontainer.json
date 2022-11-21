@@ -1,0 +1,11 @@
+{
+    "name": "Codespaces Meltano CLI Starter",
+    "extensions": [
+        "z3z1ma.meltano-power-user",
+    ],
+    "dockerFile": "Dockerfile",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/sh",
+
+    }
+}
